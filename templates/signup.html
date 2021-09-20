@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+{% if session['logged_in'] %}
+                                        <p>Oh no Dont show page</p>
+                                        {% else %}
+                                        <h2>Sign Up</h2>
+  <form id="signup" action="{{ url_for('signup')}}" method="post">
+    Username :  <input type="text" id="username" name="username" />
+    Password : <input type="password" id="password" name="password" />
+    <input type="submit" id="submit" text="Signup" />
+  </form>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+{% endif %}
+
+{% endblock %}

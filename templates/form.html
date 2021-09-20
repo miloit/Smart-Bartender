@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% block content %}
+<script> 
+
+        window.onload = function () {
+        console.log('Dokument geladen');
+        dropdown();
+        load();
+        loadCocktailList();
+    }
+	function test() {
+  		alert("e");
+		var req = new XMLHttpRequest();
+		var url = "/form";
+		// var send = {pump_1:"w"}
+		var formData = new FormData(document.getElementById("myForm"));
+		req.open("POST", url, true);
+		//req.setRequestHeader("Content-type", "application/json");
+		req.onreadystatechange = function(){
+			if(req.readyState == 4){
+				if(req.status == 200){
+				alert("w");
+				alert(req.responseText);
+				}
+			}
+		}
+		// req.send(JSON.stringify(send));
+		req.send(formData);
+  	}
+        
+        function dropdown() {
+             let dropdowns = ['cocktailingredient1', 'cocktailingredient2', 'cocktailingredient3', 'cocktailingredient4', 'cocktailingredient5', 'cocktailingredient6'];       
+             
+             /*for (let i = 0; i < data.length; i++) {
+             let dropdown = document.getElementById(fruits[0]);
+             dropdown.length = 0;
+
+let defaultOption = document.createElement('option');
+defaultOption.text = 'Choose Ingredient';
+
+dropdown.add(defaultOption);
+dropdown.selectedIndex = 0;*/
+
+const url = "{{ url_for('static', filename='json/ingredients.json') }}";
+
+const request = new XMLHttpRequest();
+request.open('GET', url, true);
+
+request.onload = function() {
+  if (request.status === 200) {
+    for (let i = 0; i < dropdowns.length; i++) {
+             let dropdown = document.getElementById(dropdowns[i]);
+             dropdown.length = 0;
+
+let defaultOption = document.createElement('option');
+defaultOption.text = 'Choose Ingredient';
+defaultOption.value = 'NA';
+dropdown.add(defaultOption);
+dropdown.selectedIndex = 0;
+    const data = JSON.parse(request.responseText);
+    let option;
+    for (let j = 0; j < data.length; j++) {
+      option = document.createElement('option');
+      option.text = data[j].name;
+      option.value = data[j].value;
+      dropdown.add(option);
+    }
+}
+   } else {
+    // Reached the server, but it returned an error
+  }   
+}
+
+request.onerror = function() {
+  console.error('An error occurred fetching the JSON from ' + url);
+};
+
+request.send();
+}
+	function getFile(path, success) {
+    		var req = new XMLHttpRequest();
+		req.open("GET", path, true);
+		req.onreadystatechange = function () {
+			if (req.readyState === 4) {
+				if (req.status === 200) {
+					success(req.responseText);       // call a function with the received value
+				} else {
+                			console.log("unexpected response status " + req.status);
+			        }
+ 			}
+    		};
+    		req.send(null);
+	}
+
+
+
+	function load() {
+    		getFile('{{ url_for('static', filename='json/drinks.json') }}', function (allText) {	// pass a function to call when the request is done
+        		var drinks = allText;
+			//var mydata = JSON.parse(allText);
+			var drinks = JSON.parse(allText);
+			console.log(drinks);
+	        	var tblBody = document.getElementById("cocktailtablebody");
+	
+			for (var i = 0; i < drinks.length; i++) {
+				var row = document.createElement("tr");
+				var cell = document.createElement("th");
+				var cellText = document.createTextNode(drinks[i].name);
+				
+				cell.appendChild(cellText);
+	      			row.appendChild(cell);
+   			        var cell = document.createElement("th");
+				var cellText = document.createTextNode(drinks[i].description);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+
+			        let str = '<ul>';
+				for (const [p, val] of Object.entries(drinks[i].ingredients)) {
+				        str += `<li>${p}:${val}</li>`;
+				}  
+      			
+				var cell = document.createElement("td");
+        	    		str += '</ul>';
+      				//var cellText = document.createTextNode(str);
+        			var cellText = document.createElement('div');
+				cellText.innerHTML = str;
+				cell.appendChild(cellText);
+				row.appendChild(cell);
+				var cell = document.createElement("td");
+				var img = document.createElement("IMG");
+				img.setAttribute("src", drinks[i].picture);
+				img.setAttribute("width", "50");
+                                img.setAttribute("height", "50");
+  				img.setAttribute("alt", drinks[i].name);
+				//var cellText = document.createTextNode(drinks[i].picture);
+				cell.appendChild(img);
+				row.appendChild(cell);
+				var cell = document.createElement("td");
+				var cellText = document.createTextNode("2");
+				cell.appendChild(cellText);
+				row.appendChild(cell);
+            			tblBody.appendChild(row);
+	        	}
+        		//console.log(objToString(drinks[0].ingredients));
+        	});
+	}
+</script>
+<style>
+table {
+	border-collapse: collapse;
+        margin-left: 5%; /* = width für #navibereich */
+        margin-right: 5%;
+}
+td, th {
+	padding: 1em;
+}
+th:first-child {
+	padding-left: .5em;
+}
+th:last-child, td:last-child {
+	padding-right: .5em;
+}
+thead th {
+	border-bottom: 2px solid lightblue;
+}
+tbody th {
+	font-weight: normal;
+	text-align: left;
+}
+th a {
+	padding: 15px 5px 15px 40px;
+}
+td {
+	text-align: center;
+}
+td:nth-child(3) {
+	text-align: right;
+}
+td:nth-child(4) {
+	color: red;
+	font-weight: bold;
+}
+td.paid {
+	color: green;
+	font-weight: normal;
+	}
+	
+	@media screen and (max-width: 42em) {
+	table, tbody, tr {
+		display: block;
+	}
+	thead {
+		display: none;
+	}
+	tr:first-child {
+		border-top: 2px solid lightblue;
+	}
+	tr {
+		border-bottom: 2px solid lightblue;
+		padding: .5em 2em 1em;
+	}
+	th::before {
+		content: "Name: ";
+	}
+	td:nth-child(2)::before {
+		content: "Description: ";
+	}
+	td:nth-child(3)::before {
+		content: "Ingredients: ";
+	}
+	td:nth-child(4)::before {
+		content: "Picture: ";
+	}
+	td.paid + td::before {
+		content: "Status: ";
+	}
+	tbody th {
+		display: block;
+		font-weight: bold;
+	}
+	th a {
+		font-weight: normal;
+	}
+	td {
+		display: inline-block;
+		min-width: 30%;
+		padding: .2em 2em;
+		text-align: left;
+	}
+	td:nth-child(3) {
+		text-align: left;
+	}
+}
+@media screen and (max-width: 33em) {
+	td {
+		display: block;
+	}
+	tr {
+		padding: .5em .5em 1em;
+	}
+}
+
+</style>
+<!--<button id="get-details" onclick="dropdown()">Get Details</button>
+     <h1>How old are you?</h1>
+    <!--<form id="myForm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <div class = "form-group">
+        <input type="text" name = "age">
+        <input id="FileUpload1" name="file" type="file" size="50" accept="text/*"> 
+      </div>
+      <input class="btn btn-primary" value="submit" type="submit">
+    </form>-->
+    <table>
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>description</th>
+      <th>ingredients</th>
+      <th>Picture</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="cocktailtablebody">
+    <!--<tr>
+      <th><a href="">Rum & Coke</a></th>
+      <td><ul><li>rum: 12</li>
+		<li>	coke: 48</li></ul></td>
+      <td>12,50 €</td>
+      <td class="paid">bezahlt</td>
+      <td>15.01.2014</td>
+    </tr>-->
+
+  </tbody>
+</table>
+<form id="myForm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <!--<div class = "form-group">-->
+        <label for="cocktailname">
+            Cocktail Name: <br /><input name="cocktailname" id="cocktailname" placeholder="Max">
+        </label>
+        <label for="cocktaildescription">
+            Cocktail Description: <br /><input name="cocktaildescription" id="cocktaildescription" placeholder="Max">
+        </label>
+        <label for="cocktailingredient1">
+            Cocktail ingredient 1:<br /> 
+            <select name="cocktailingredient1" id="cocktailingredient1" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient1" id="cocktailingredient1" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity1">
+            Cocktail ingredient 1 quantity[ml]: <br />
+            <input name="cocktailingredientquantity1" id="cocktailingredientquantity1" placeholder="0" type="number" >
+        </label>
+        <label for="cocktailingredient2">
+            Cocktail ingredient 2: <br />
+            <select name="cocktailingredient2" id="cocktailingredient2" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient2" id="cocktailingredient2" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity2">
+            Cocktail ingredient 2 quantity[ml]: <br /><input name="cocktailingredientquantity2" id="cocktailingredientquantity2" placeholder="0" type="number">
+        </label>
+        <label for="cocktailingredient3">
+            Cocktail ingredient 3: <br />
+            <select name="cocktailingredient3" id="cocktailingredient3" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient3" id="cocktailingredient3" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity3">
+            Cocktail ingredient 3  quantity[ml]: <br /><input name="cocktailingredientquantity3" id="cocktailingredientquantity3" placeholder="0" type="number">
+        </label>
+        <label for="cocktailingredient4">
+            Cocktail ingredient 4: <br />
+            <select name="cocktailingredient4" id="cocktailingredient4" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient4" id="cocktailingredient4" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity4">
+            Cocktail ingredient 4 quantity[ml]: <br /><input name="cocktailingredientquantity4" id="cocktailingredientquantity4" placeholder="0" type="number">
+        </label>
+        <label for="cocktailingredient5">
+            Cocktail ingredient 5: <br />
+            <select name="cocktailingredient5" id="cocktailingredient5" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient5" id="cocktailingredient5" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity5">
+            Cocktail ingredient 5 quantity[ml]: <br /><input name="cocktailingredientquantity5" id="cocktailingredientquantity5" placeholder="0" type="number">
+        </label>
+        <label for="cocktailingredient6">
+            Cocktail ingredient 6: <br />
+            <select name="cocktailingredient6" id="cocktailingredient6" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient6" id="cocktailingredient6" placeholder="Max">-->
+        </label>
+        <label for="cocktailingredientquantity6">
+            Cocktail ingredient 6 quantity[ml]: <br /><input name="cocktailingredientquantity6" id="cocktailingredientquantity6" placeholder="0" type="number">
+        </label>
+        <label for="cocktailpicture">Cocktail Picture<br>
+        <input id="cocktailpicture" name="cocktailpicture" type="file" size="50" accept="text/*"></label>
+      <!--</div>-->
+      <input class="btn btn-primary" value="submit" type="submit">
+    </form>
+
+{% endblock %}

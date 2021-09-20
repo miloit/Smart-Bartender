@@ -1,0 +1,302 @@
+            /*  ===============================================
+Stylesheet für die Übungsseiten aus  "Little Boxes, Teil 1"
+Stand:  Layoutvorlage aus Kapitel 18
+        dreispaltig, Header, Footer
+        float und margin
+Datei:  bildschirm.css
+Datum:  2009-04-18
+Autor:  Peter Müller
+Aufbau: 1. Kalibrierung und Restauration
+        2. Allgemeine Styles
+        3. Styles für Layoutbereiche
+        4. Sonstige Styles
+================================================ */
+
+/* ======================================
+  1. Kalibrierung und Restauration
+  ====================================== */
+/* Reset - alle Abstände auf NULL */
+*  { padding: 0; margin: 0; }
+/* optional: erzwingt Scrollbar im Firefox */
+html { height: 100%; margin-bottom: 1px; }
+h2, h3, p, ul, ol { margin-bottom: 1em; }
+ul ul { margin-bottom: 0; }
+li { margin-left: 1em ; }
+/* hier ggfs. Abstände für weitere Elemente restaurieren */
+
+/* ======================================
+  2. Allgemeine Styles
+  ====================================== */
+body {
+  background-color: #8c8c8c;
+  color: white;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: small;
+}
+h1 { font-size: 150%; }
+h2 { font-size: 130%; }
+h3 { font-size: 110%; }
+address {
+  text-align: center;
+  font-size: 80%;
+  font-style: normal;
+  letter-spacing: 2px;
+  line-height: 1.5;
+}
+a {
+  text-decoration: none;
+  /* outline: none; */ /* nur wenn es Sie wirklich stört */
+}
+a:link { ; }
+a:visited {  }
+a:hover,
+a:focus {
+
+}
+a:active {
+
+}
+/* Allgemeine Klassen und IDs */
+img#logo {
+
+}
+/* Skiplink ausblenden */
+.skiplink {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+}
+/* Bilder floaten und mit Rahmen versehen */
+.bildlinks {
+  float:left;
+  padding: 3px;
+  border: 5px solid #ccc;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.bildrechts {
+  float:right;
+  padding: 3px;
+  border: 5px solid #ccc;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+.clearing { clear: both; }
+
+/* ======================================
+  3.  Styles für die Layoutbereiche
+  ====================================== */
+#wrapper {
+  background-color: white;
+  color: black;
+  width: 80%;
+  margin: 10px auto;
+}
+/* Feste Breite für IE6 */
+* html #wrapper { width: 760px; }
+
+#kopfbereich {
+  position: relative;
+  background-color: #5F8EDC;
+  color: white;
+  padding: 10px 20px 10px 20px;
+}
+  #kopfbereich p {
+
+  }
+  div#kopfbereich p span {
+
+  }
+#navibereich {
+  /* background-color: pink; */ /* zum Testen Kommentar entfernen */
+  float: left;
+  width: 15%;
+}
+#navibereich_innen {
+  padding-left: 20px;
+  padding-top: 20px;
+}
+/* Feste Breite für IE6 */
+* html #navibereich { width: 110px; }
+
+  #navibereich ul {
+    width: 6em;
+    border-top: 1px solid #5F8EDC;
+  }
+  #navibereich li {
+    list-style-type: none;
+    border-left: 1px solid #5F8EDC;
+    border-bottom: 1px solid #5F8EDC;
+    margin: 0;
+  }
+  #navibereich a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    background-color: #D4E1F7;
+    padding: 4px;
+    border-left: 3px solid #D4E1F7;
+  }
+  #startseite #navi01 a,
+  #galerieseite #navi02 a,
+  #kontaktseite #navi03 a {
+    color: black;
+    background-color: white;
+    border-left-color: #5F8EDC;
+    border-bottom: none;
+  }
+  #navibereich a:hover,
+  #navibereich a:focus {
+    color: black;
+    background-color: white;
+    border-left-color: #5F8EDC;
+    border-bottom: none;
+  }
+  #navibereich a:active {
+    color: white;
+    background-color: #5F8EDC;
+  }
+/* Style für #sidebar */
+#sidebar {
+  float: right;
+  width: 20%;
+}
+#sidebar_innen {
+  padding: 10px;
+  padding-top: 20px;
+}
+/* Feste Breite für IE6 */
+* html #sidebar { width: 110px; }
+
+#textbereich {
+  margin-left: 15%; /* = width für #navibereich */
+  margin-right: 20%; /* = width für #sidebar */
+}
+#textbereich_innen {
+  padding: 20px 10px 20px 20px;
+}
+  #textbereich a {
+  border-bottom: 1px dotted #D4E1F7;
+}
+  #textbereich a:hover,
+  #textbereich a:focus {
+    border-bottom: 1px solid #5F8EDC;
+  }
+#fussbereich {
+  clear:both;
+  background-color: white;
+  color: black;
+  padding: 10px 20px 20px 20px;
+  margin-top: 0;
+}
+/* ====================================== 
+  4. Sonstige Styles 
+  ====================================== */
+/* Das Kontaktformular */
+form {
+  background-color: #eee;
+  /*width: 90%;*/
+  margin-left: 5%; /* = width für #navibereich */
+  margin-right: 5%;
+  padding: 20px;
+  border: 1px solid #8c8c8c;
+}
+label {
+  display: block;
+  cursor: pointer;
+}
+input#absender,
+textarea {
+  width: 300px;
+  border: 1px solid #8c8c8c;
+  margin-bottom: 1em;
+}
+textarea {
+  height: 7em;
+}
+input:focus,
+textarea:focus {
+  background-color: #d9d9d9;
+}
+
+/* Die kleine Galerie */
+div.galerie {
+  overflow: hidden; /* zum Einschließen der Floats */
+  padding: 25px 10px 10px 0;
+  margin: 0 3px 3px 0;
+}
+
+/* Sternchen-Hack und Holly-Hack
+   bewirkt hasLayout für IE6 */
+* html div.galerie { height: 1%; }
+
+div.galerie img {
+  float: left;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-right-color: #aaa;
+  border-bottom-color: #aaa;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+
+/* =======================================
+   E N D E   D E S   S T Y L E S H E E T S
+   ======================================= */
+
+
+article
+{
+    //color: #800000;
+    //font-family: "Baskerville Old Face", serif;
+    //font-size: 1.8em;
+    text-align: justify;
+    width: 100%;
+    margin: auto;
+}
+ 
+.texte_haut
+{
+    width: 80%;
+    float: right;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left:2em;
+}
+ 
+.texte_bas
+{
+    margin-bottom: 20px;
+    clear: both;
+    width: 80%;
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+}
+ 
+.img_haut
+{
+    margin-left: 5px;
+    margin-right: 10px;
+    float: left;
+    width: 18%;
+    vertical-align: middle;
+    display: inline-block;
+    box-shadow: 5px 5px 4px #1c1a19;
+}
+ 
+.img_bas
+{
+    margin-right: 5px;
+    margin-bottom: 20px;
+    float: right;
+    width: 18%;
+    vertical-align: middle;
+    display: inline-block;
+    box-shadow: 5px 5px 4px #1c1a19;
+}

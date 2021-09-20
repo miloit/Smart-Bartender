@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% block content %}
+<script> 
+
+        window.onload = function () {
+        console.log('Dokument geladen');
+        //xdropdown();
+        loade();
+        loadCocktailList();
+    }
+	function test() {
+  		alert("e");
+		var req = new XMLHttpRequest();
+		var url = "/ingredients";
+		// var send = {pump_1:"w"}
+		var formData = new FormData(document.getElementById("myFormm"));
+		req.open("POST", url, true);
+		//req.setRequestHeader("Content-type", "application/json");
+		req.onreadystatechange = function(){
+			if(req.readyState == 4){
+				if(req.status == 200){
+				alert("w");
+				alert(req.responseText);
+				}
+			}
+		}
+		// req.send(JSON.stringify(send));
+		req.send(formData);
+  	}
+        
+
+	function getFile(path, success) {
+    		var req = new XMLHttpRequest();
+		req.open("GET", path, true);
+		req.onreadystatechange = function () {
+			if (req.readyState === 4) {
+				if (req.status === 200) {
+					success(req.responseText);       // call a function with the received value
+				} else {
+                			console.log("unexpected response status " + req.status);
+			        }
+ 			}
+    		};
+    		req.send(null);
+	}
+
+
+
+	function loade() {
+    		getFile('{{ url_for('static', filename='json/ingredients.json') }}', function (allText) {	// pass a function to call when the request is done
+        		var ingredients = allText;
+			//var mydata = JSON.parse(allText);
+			var ingredients = JSON.parse(allText);
+			console.log(ingredients);
+	        	var tblBody = document.getElementById("ingredientstablebody");
+
+                        for (var i = 0; i < ingredients.length; i++) {
+                                var row = document.createElement("tr");
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(ingredients[i].name);
+                                   
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(ingredients[i].value);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+
+                                var cell = document.createElement("td");
+                                var img = document.createElement("IMG");
+                                img.setAttribute("src", ingredients[i].picture);
+                                img.setAttribute("width", "50");
+                                img.setAttribute("height", "50");
+                                img.setAttribute("alt", ingredients[i].name);
+                                //var cellText = document.createTextNode(drinks[i].picture);
+                                cell.appendChild(img);
+                                row.appendChild(cell);
+			        tblBody.appendChild(row);
+                        }
+        		//console.log(objToString(drinks[0].ingredients));
+        	});
+	}
+</script>
+<style>
+table {
+	border-collapse: collapse;
+        margin-left: 5%; /* = width für #navibereich */
+        margin-right: 5%;
+}
+td, th {
+	padding: 1em;
+}
+th:first-child {
+	padding-left: .5em;
+}
+th:last-child, td:last-child {
+	padding-right: .5em;
+}
+thead th {
+	border-bottom: 2px solid lightblue;
+}
+tbody th {
+	font-weight: normal;
+	text-align: left;
+}
+th a {
+	padding: 15px 5px 15px 40px;
+}
+td {
+	text-align: center;
+}
+td:nth-child(3) {
+	text-align: right;
+}
+td:nth-child(4) {
+	color: red;
+	font-weight: bold;
+}
+td.paid {
+	color: green;
+	font-weight: normal;
+	}
+	
+	@media screen and (max-width: 42em) {
+	table, tbody, tr {
+		display: block;
+	}
+	thead {
+		display: none;
+	}
+	tr:first-child {
+		border-top: 2px solid lightblue;
+	}
+	tr {
+		border-bottom: 2px solid lightblue;
+		padding: .5em 2em 1em;
+	}
+	th::before {
+		content: "Name: ";
+	}
+	td:nth-child(2)::before {
+		content: "value: ";
+	}
+	td:nth-child(3)::before {
+		content: "Ingredients: ";
+	}
+	td:nth-child(4)::before {
+		content: "Picture: ";
+	}
+	td.paid + td::before {
+		content: "Status: ";
+	}
+	tbody th {
+		display: block;
+		font-weight: bold;
+	}
+	th a {
+		font-weight: normal;
+	}
+	td {
+		display: inline-block;
+		min-width: 30%;
+		padding: .2em 2em;
+		text-align: left;
+	}
+	td:nth-child(3) {
+		text-align: left;
+	}
+}
+@media screen and (max-width: 33em) {
+	td {
+		display: block;
+	}
+	tr {
+		padding: .5em .5em 1em;
+	}
+}
+
+</style>
+<!--<button id="get-details" onclick="dropdown()">Get Details</button>
+     <h1>How old are you?</h1>
+    <!--<form id="myForm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <div class = "form-group">
+        <input type="text" name = "age">
+        <input id="FileUpload1" name="file" type="file" size="50" accept="text/*"> 
+      </div>
+      <input class="btn btn-primary" value="submit" type="submit">
+    </form>-->
+    <table>
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>value</th>
+      <th>picture</th>
+    </tr>
+  </thead>
+  <tbody id="ingredientstablebody">
+    <!--<tr>
+      <th><a href="">Rum & Coke</a></th>
+      <td><ul><li>rum: 12</li>
+		<li>	coke: 48</li></ul></td>
+      <td>12,50 €</td>
+      <td class="paid">bezahlt</td>
+      <td>15.01.2014</td>
+    </tr>-->
+
+  </tbody>
+</table>
+<form id="myFormm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <!--<div class = "form-group">-->
+        <label for="ingredientslongname">
+            ingredients long Name: <br /><input name="ingredientslongname" id="ingredientslongname" placeholder="Max">
+        </label>
+        <label for="ingredientsshortname">
+            Cocktail Description: <br /><input name="ingredientsshortname" id="ingredientsshortname" placeholder="Max">
+        </label>
+        <label for="ingredientsimage">ingredients image<br>
+        <input id="ingredientsimage" name="ingredientsimage" type="file" size="50" accept="text/*"></label>
+      <!--</div>-->
+      <input class="btn btn-primary" value="submit" type="submit">
+    </form>
+
+{% endblock %}

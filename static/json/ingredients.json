@@ -1,0 +1,12 @@
+[
+        {"name": "Gin", "value": "gin"},
+        {"name": "Rum", "value": "rum"},
+        {"name": "Vodka", "value": "vodka"},
+        {"name": "Tequila", "value": "tequila"},
+        {"name": "Tonic Water", "value": "tonic"},
+        {"name": "Coke", "value": "coke"},
+        {"name": "O Saft", "value": "osaft"},
+        {"name": "Ananas", "value": "anasaft"},
+        {"name": "Zitro Saft", "value": "zsaft"}
+]
+

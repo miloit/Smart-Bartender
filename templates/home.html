@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+			<title>Little Boxes - float und margin - 3-spaltig flexibel</title>
+			<link href="{{ url_for('static', filename='css/bildschirm.css') }}" rel="stylesheet" type="text/css" media="screen" />
+			<script type="text/javascript" >
+				function readTextFile(file) {
+					var rawFile = new XMLHttpRequest();
+					var allText = "";
+					rawFile.open("GET", file, false);
+					rawFile.onreadystatechange = function () {
+						if(rawFile.readyState === 4) {
+							if(rawFile.status === 200 || rawFile.status == 0) {
+								allText = rawFile.responseText;
+            						}
+						}
+    					}
+    					rawFile.send(null);
+					return allText;
+				}
+            			function load() {
+                			var allText = readTextFile('{{ url_for('static', filename='json/drinks.json') }}');
+		      			var mydata = JSON.parse(allText);
+                       			var div = document.getElementById('cocktaillist');
+
+                			for(var i = 0;i < mydata.length; i++)
+                			{
+                    				div.innerHTML = div.innerHTML + "<p class='inner' id="+i+">"+ mydata[i].name +"</p>" + "<br>";
+                			}
+				}
+			</script>
+	</head>
+	<body id="startseite" onLoad="load()">
+		<div id="wrapper">
+			<div id="kopfbereich">
+				<div class="skiplink"><a href="#textbereich">Zum Inhalt</a></div>
+				<h1>Platz für Ihr Logo</h1>
+				<p>Platz für Ihren Slogan</p>
+			</div> <!-- Ende kopfbereich -->
+
+			<div id="navibereich">
+				<div id="navibereich_innen">
+					<ul>
+						<li id="navi01"><a href="/home">Startseite</a></li>
+						<li id="navi02"><a href="galerie.html">Galerie</a></li>
+						<li id="navi03"><a href="kontakt.html">Kontakt</a></li>
+					</ul>
+				</div> <!-- Ende navibereich_innen -->
+			</div> <!-- Ende navibereich -->
+
+			<div id="sidebar">
+				<div id="sidebar_innen">
+					<h2>Cocktails</h2>
+					<div id="cocktaillist">
+					</div>
+				</div> <!-- Ende sidebar_innen -->
+			</div> <!-- Ende sidebar -->
+
+			<div id="textbereich">
+				<div id="textbereich_innen">
+				<h2>Startseite</h2>
+				<p>Weit hinten, hinter den Wortbergen, fern der Länder Vokalien und Konsonantien leben die Blindtexte. Abgeschieden wohnen Sie in Buchstabhausen an der Küste des Semantik, eines großen Sprachozeans.</p>
+				<p> Ein kleines Bächlein namens Duden fließt durch ihren Ort und versorgt sie mit den nötigen Regelialien. Es ist ein paradiesmatisches Land, in dem einem gebratene Satzteile in den Mund fliegen.</p>
+				<p> Nicht einmal von der allmächtigen Interpunktion werden die Blindtexte beherrscht – ein geradezu unorthographisches Leben. Eines Tages aber beschloß eine kleine Zeile Blindtext, ihr Name war Lorem Ipsum, hinaus zu gehen in die weite Grammatik. Der große Oxmox riet ihr davon ab... </p>
+			</div> <!-- Ende textbereich_innen -->
+		</div> <!-- Ende textbereich -->
+		<div id="fussbereich">
+			<address>
+				Little Boxes &middot; Kästchenweg 12 &middot; 01234 Boxberg
+				<br />
+				Tel: 01234 567890 &middot; Fax: 01234 567891
+			</address>
+		</div> <!-- Ende fussbereich -->
+		</div> <!-- Ende wrapper -->
+	</body>
+</html>

@@ -1,0 +1,16 @@
+--2021-06-11 05:53:17--  https://www.fiverr.com/download/attachment/message/60c276d69aebc7002b510a89/60c276b24c45dd00085a97e3/bartender_py3.py?order_id=FO618DDC838C6
+Resolving www.fiverr.com (www.fiverr.com)... 104.16.154.71, 104.18.254.23
+Connecting to www.fiverr.com (www.fiverr.com)|104.16.154.71|:443... connected.
+HTTP request sent, awaiting response... 307 Temporary Redirect
+Location: https://block.fiverr.com/?url=aHR0cDovL3d3dy5maXZlcnIuY29tL2Rvd25sb2FkL2F0dGFjaG1lbnQvbWVzc2FnZS82MGMyNzZkNjlhZWJjNzAwMmI1MTBhODkvNjBjMjc2YjI0YzQ1ZGQwMDA4NWE5N2UzL2JhcnRlbmRlcl9weTMucHk/b3JkZXJfaWQ9Rk82MThEREM4MzhDNg==&uuid=f0551db0-ca70-11eb-851f-0f555a539f60&vid= [following]
+--2021-06-11 05:53:18--  https://block.fiverr.com/?url=aHR0cDovL3d3dy5maXZlcnIuY29tL2Rvd25sb2FkL2F0dGFjaG1lbnQvbWVzc2FnZS82MGMyNzZkNjlhZWJjNzAwMmI1MTBhODkvNjBjMjc2YjI0YzQ1ZGQwMDA4NWE5N2UzL2JhcnRlbmRlcl9weTMucHk/b3JkZXJfaWQ9Rk82MThEREM4MzhDNg==&uuid=f0551db0-ca70-11eb-851f-0f555a539f60&vid=
+Resolving block.fiverr.com (block.fiverr.com)... 104.16.154.71, 104.18.254.23
+Connecting to block.fiverr.com (block.fiverr.com)|104.16.154.71|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 25662 (25K) [text/html]
+Saving to: ‘bartender_py3.py?order_id=FO618DDC838C6’
+
+                bartender_py3.py   0%[                                                           ]       0  --.-KB/s               bartender_py3.py?order_id=FO618D 100%[==========================================================>]  25.06K  --.-KB/s    in 0.009s  
+
+2021-06-11 05:53:18 (2.69 MB/s) - ‘bartender_py3.py?order_id=FO618DDC838C6’ saved [25662/25662]
+

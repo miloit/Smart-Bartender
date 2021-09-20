@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript" >
+				function getFile(path, success) {
+					var req = new XMLHttpRequest();
+						req.open("GET", path, true);
+						req.onreadystatechange = function () {
+							if (req.readyState === 4) {
+								if (req.status === 200) {
+									success(req.responseText);       // call a function with the received value
+								} else {
+									console.log("unexpected response status " + req.status);
+								}
+							}
+						};
+					req.send(null);
+				}
+			function test() {
+                alert("e");
+                var req = new XMLHttpRequest();
+                var url = "/pumpconfig";
+                // var send = {pump_1:"w"}
+                var formData = new FormData(document.getElementById("myForm"));
+                req.open("POST", url, true);
+                //req.setRequestHeader("Content-type", "application/json");
+                req.onreadystatechange = function(){
+                        if(req.readyState == 4){
+                                if(req.status == 200){
+                                alert("w");
+                                alert(req.responseText);
+                                }
+                        }
+                }
+                // req.send(JSON.stringify(send));
+                req.send(formData);
+        }
+				
+				
+				
+
+	
+            	function loadCocktailList() {
+            	
+							 dse = document.getElementById("pumpnr").value;
+							 if (dse != "") {
+    
+    }
+						getFile('{{ url_for('static', filename='json/pumps_config.json') }}', function (allText) {	// pass a function to call when the request is done
+						
+							var pump_config = JSON.parse(allText);
+							console.log(pump_config);
+							let d = Object.values(pump_config);
+							console.log(d);
+
+                                                       var tblBody = document.getElementById("pumpconfigtablebody");
+						
+						//var elmtTable = document.getElementById('TABLE_ID_HERE');
+						//var tableRows = tblBody.getElementsByTagName('tr');				
+
+						//var rowCount = tableRows.length;
+						//console.log(rowCount);
+						
+
+						//var myTable = document.getElementById("myTable");
+/*var rowCount = tblBody.rows.length;
+for (var x=rowCount-1; x>0; x--) {
+   tblBody.deleteRow(x);
+}
+
+console.log(rowCount);*/
+//var Parent = document.getElementById(tableID);
+while(tblBody.hasChildNodes())
+{
+   tblBody.removeChild(tblBody.firstChild);
+}
+
+
+							
+                        /*for (var i = 0; i < d.length; i++) {
+                                var row = document.createElement("tr");
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].name);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].value);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+				
+				var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].pin);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell); 
+				tblBody.appendChild(row);
+			}*/
+							
+							getFile('{{ url_for('static', filename='json/ingredients.json') }}', function (allTexte) {	// pass a function to call when the request is done
+								
+							for (var i = 0; i < d.length; i++) {
+                                var row = document.createElement("tr");
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].name);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].value);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+
+                                var cell = document.createElement("th");
+                                var cellText = document.createTextNode(d[i].pin);
+
+                                cell.appendChild(cellText);
+                                row.appendChild(cell);
+                                tblBody.appendChild(row);
+                        }
+			
+							
+							let dropdown = document.getElementById("pumpnr");
+							let dropdowne = document.getElementById("pumpvalue");
+							let indexcheck = 0;
+							dropdown.length = 0;
+							let defaultOption = document.createElement('option');
+							defaultOption.text = 'Choose pumpnr';
+							defaultOption.value = 'NA';
+							dropdown.add(defaultOption);
+							    //dropdown.selectedIndex = 0;							
+							let option;
+							let index = 0;
+    for (let j = 0; j < d.length; j++) {
+    if(dse != "") {
+    	if (dse == d[j].name) {
+    	//alert("e");
+    		 index = (j+1);
+    		 document.getElementById("pumppin").value = d[j].pin
+    		 //document.getElementById("pumpvalue").value = d[j].value
+    		 var pump_igredients = JSON.parse(allTexte);
+    		 
+             dropdowne.length = 0;
+
+let defaultOption = document.createElement('option');
+defaultOption.text = 'Choose Ingredient';
+defaultOption.value = 'NA';
+dropdowne.add(defaultOption);
+dropdowne.selectedIndex = 0;
+    console.log(pump_igredients);
+    let option;
+    for (let i = 0; i < pump_igredients.length; i++) {
+      option = document.createElement('option');
+      option.text = pump_igredients[i].name;
+      option.value = pump_igredients[i].value;
+      dropdowne.add(option);
+      if (pump_igredients[i].value == d[j].value){
+      indexcheck = (i+1)
+      }
+    }
+    	}
+    } else {
+
+    }
+      option = document.createElement('option');
+      option.text = d[j].name;
+      option.value = d[j].name;
+      dropdown.add(option);
+    }
+    dropdown.selectedIndex = index;
+        dropdowne.selectedIndex = indexcheck;
+
+
+					});});
+				}
+			</script>
+
+
+<style>
+table {
+	border-collapse: collapse;
+        margin-left: 5%; /* = width für #navibereich */
+        margin-right: 5%;
+}
+td, th {
+	padding: 1em;
+}
+th:first-child {
+	padding-left: .5em;
+}
+th:last-child, td:last-child {
+	padding-right: .5em;
+}
+thead th {
+	border-bottom: 2px solid lightblue;
+}
+tbody th {
+	font-weight: normal;
+	text-align: left;
+}
+th a {
+	padding: 15px 5px 15px 40px;
+}
+td {
+	text-align: center;
+}
+td:nth-child(3) {
+	text-align: right;
+}
+td:nth-child(4) {
+	color: red;
+	font-weight: bold;
+}
+td.paid {
+	color: green;
+	font-weight: normal;
+	}
+	
+	@media screen and (max-width: 42em) {
+	table, tbody, tr {
+		display: block;
+	}
+	thead {
+		display: none;
+	}
+	tr:first-child {
+		border-top: 2px solid lightblue;
+	}
+	tr {
+		border-bottom: 2px solid lightblue;
+		padding: .5em 2em 1em;
+	}
+	th::before {
+		content: "Name: ";
+	}
+	td:nth-child(2)::before {
+		content: "Ingredient: ";
+	}
+	td:nth-child(3)::before {
+		content: "Pin: ";
+	}
+	tbody th {
+		display: block;
+		font-weight: bold;
+	}
+	th a {
+		font-weight: normal;
+	}
+	td {
+		display: inline-block;
+		min-width: 30%;
+		padding: .2em 2em;
+		text-align: left;
+	}
+	td:nth-child(3) {
+		text-align: left;
+	}
+}
+@media screen and (max-width: 33em) {
+	td {
+		display: block;
+	}
+	tr {
+		padding: .5em .5em 1em;
+	}
+}
+
+</style>
+<!--<button id="get-details" onclick="dropdown()">Get Details</button>
+     <h1>How old are you?</h1>
+    <!--<form id="myForm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <div class = "form-group">
+        <input type="text" name = "age">
+        <input id="FileUpload1" name="file" type="file" size="50" accept="text/*"> 
+      </div>
+      <input class="btn btn-primary" value="submit" type="submit">
+    </form>-->
+    <table>
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>ingredient</th>
+      <th>Pin</th>
+      <!--<th>Status</th>-->
+    </tr>
+  </thead>
+  <tbody id="pumpconfigtablebody">
+    <!--<tr>
+      <th><a href="">Rum & Coke</a></th>
+      <td><ul><li>rum: 12</li>
+		<li>	coke: 48</li></ul></td>
+      <td>12,50 €</td>
+      <td class="paid">bezahlt</td>
+      <td>15.01.2014</td>
+    </tr>-->
+
+  </tbody>
+</table>
+<form id="myForm" method="POST" action="javascript:void(0);" onsubmit="test()" enctype = "multipart/form-data">>
+      <!--<div class = "form-group">-->
+        
+        
+        <label for="pumpnr">
+            pumpnr:<br />
+            <select name="pumpnr" id="pumpnr" form="myForm" onchange="loadCocktailList()">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient1" id="cocktailingredient1" placeholder="Max">-->
+        </label>
+        <label for="pumpvalue">
+            pumpvalue:<br />
+            <select name="pumpvalue" id="pumpvalue" form="myForm">
+             <!-- <option value="volvo">Volvo</option>
+             <option value="saab">Saab</option>
+             <option value="opel">Opel</option>
+             <option value="audi">Audi</option>
+            --></select><!--<input name="cocktailingredient1" id="cocktailingredient1" placeholder="Max">-->
+        </label>
+        <label for="pumppin">
+            pumppin: <br /><input name="pumppin" id="pumppin" placeholder="" readonly>
+        </label>
+	<input class="btn btn-primary" value="submit" type="submit">
+</form>
+
+{% endblock %}

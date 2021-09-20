@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+			<title>Little Boxes - float und margin - 3-spaltig flexibel</title>
+			<link href="{{ url_for('static', filename='css/bildschirm.css') }}" rel="stylesheet" type="text/css" media="screen" />
+			<script type="text/javascript" >
+				function getFile(path, success) {
+					var req = new XMLHttpRequest();
+						req.open("GET", path, true);
+						req.onreadystatechange = function () {
+							if (req.readyState === 4) {
+								if (req.status === 200) {
+									success(req.responseText);       // call a function with the received value
+								} else {
+									console.log("unexpected response status " + req.status);
+								}
+							}
+						};
+					req.send(null);
+				}
+            	function loadCocktailList() {
+					getFile('https://raw.githubusercontent.com/miloit/Smart-Bartender/master/static/json/drinks.json', function (allText) {	// pass a function to call when the request is done
+						var drinks = JSON.parse(allText);
+						var div = document.getElementById('cocktaillist');
+						
+						//delete div content
+						div.innerHTML = "";
+			
+						getFile('https://raw.githubusercontent.com/miloit/Smart-Bartender/master/pump_config.json', function (allText) {	// pass a function to call when the request is done
+						
+							var pump_config = JSON.parse(allText);
+							let filtereddrinks = drinks.filter(d=> {
+															// get an array of the ingredients needed
+															let e = Object.keys(d.ingredients).filter(i => {
+																// get an array of the pumps and check each ingredient
+																let d = Object.values(pump_config).map(p => p.value.trim() == i.trim()).includes(true);
+																// if the resulting array doesn't have at least one 'true' value, the ingredient isn't available in pumps
+																return d
+															}).length === Object.keys(d.ingredients).length
+															// check that the length of found ingredients matches the original length we were searching for
+															return e
+													})
+							for (var i = 0; i < drinks.length; i++) {
+								var flagmixable = false;
+									for (var j = 0; j < filtereddrinks.length; j++) {
+										if (drinks[i].name == filtereddrinks[j].name){
+											flagmixable = true;
+										}
+									}
+								if (flagmixable) {
+									div.innerHTML = div.innerHTML + "<p class='inner' id="+i+"><a href="+i+">"+ drinks[i].name +"</a></p>" + "<br>";
+								} else  {
+									div.innerHTML = div.innerHTML + "<p class='inner' id="+i+">"+ drinks[i].name +"</p>" + "<br>";
+								}
+							}
+						});
+					});
+				}
+			</script>
+	</head>
+	<body id="startseite" onLoad="loadCocktailList()">
+		<div id="wrapper">
+			<div id="kopfbereich">
+				<div class="skiplink"><a href="#textbereich">Zum Inhalt</a></div>
+				<h1>Platz fÃ¼r Ihr Logo</h1>
+				<p>Platz fÃ¼r Ihren Slogan</p>
+			</div> <!-- Ende kopfbereich -->
+
+			<div id="navibereich">
+				<div id="navibereich_innen">
+					<ul>
+						<li id="navi01"><a href="/home">Startseite</a></li>
+						<li id="navi02"><a href="/login">Login</a></li>
+						<li id="navi03"><a href="kontakt.html">Kontakt</a></li>
+					</ul>
+				</div> <!-- Ende navibereich_innen -->
+			</div> <!-- Ende navibereich -->
+
+			<div id="sidebar">
+				<div id="sidebar_innen">
+					<h2>Cocktails</h2>
+					<div id="cocktaillist">
+					</div>
+				</div> <!-- Ende sidebar_innen -->
+			</div> <!-- Ende sidebar -->
+
+			<div id="textbereich">
+				<div id="textbereich_innen">
+					{% if session['logged_in'] %}
+						<p>You're logged in already!</p>
+					{% else %}
+  						<h2>Login</h2>
+						<form id="login" action="{{ url_for('login')}}" method="post">
+							Username :  <input type="text" id="username" name="username" />
+							Password : <input type="password" id="password" name="password" />
+							<input type="submit" id="submit" text="Login" />
+						</form>
+					{% endif%}
+						{% with messages = get_flashed_messages() %}
+						{% if messages %}
+							<ul class=flashes>
+						{% for message in messages %}
+						<li>{{ message }}</li>
+						{% endfor %}
+						</ul>
+						{% endif %}
+						{% endwith %}
+			</div> <!-- Ende textbereich_innen -->
+		</div> <!-- Ende textbereich -->
+		<div id="fussbereich">
+			<address>
+				Little Boxes &middot; KÃ¤stchenweg 12 &middot; 01234 Boxberg
+				<br />
+				Tel: 01234 567890 &middot; Fax: 01234 567891
+			</address>
+		</div> <!-- Ende fussbereich -->
+		</div> <!-- Ende wrapper -->
+	</body>
+</html>

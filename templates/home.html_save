@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smart Bartender</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <script type="text/javascript">	
+		function updateSelect(select) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("POST", document.getElementById("body-form").action, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+			var data = {"description": document.getElementById("body-list-select").value};
+            xmlhttp.onreadystatechange = function () {
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					var json = JSON.parse(xmlhttp.responseText);
+					// this will return the new pump contents (or old one if it didn't update)
+					document.getElementById("body-info").innerHTML = json[0]["description"];
+				}
+			}
+			xmlhttp.send(JSON.stringify(data));
+        }
+        
+        function makeDrink(btn) {
+			var url = "/drink/make/" + btn.name;
+			btn.disabled = true;
+			getDrinkTime(btn);
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					console.log(this.response);
+					btn.disabled = false;
+					if (btn.id == "button-make-2") { btn.innerHTML = "Make It A Double!" }
+					else { btn.innerHTML = "Make It!" }
+				}
+			}
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+		}
+		
+		function getDrinkTime(btn) {
+			var url = "/drink/make/time/" + btn.name;
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					btn.innerHTML = parseInt(this.response);
+					// do a nifty countdown on the button while the drink's being made
+					var x = setInterval(function() {
+						if (parseInt(btn.innerHTML) > 0) {
+							btn.innerHTML = parseInt(btn.innerHTML) - 1
+						} else {
+							clearInterval(x);
+						}
+					}, 1000);
+				}
+			}
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+		}
+        
+		function populateList(listId, url) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var drink_array = JSON.parse(this.responseText);
+					var ele = document.getElementById(listId);
+					ele.innerHTML = "";
+					for (var i = 0; i < drink_array.length; i++) {
+						if (url.substring(0,12) == "drink/ingred") {
+							if (drink_array[i]['pump']) {
+								ele.innerHTML = ele.innerHTML + '<option value="' + drink_array[i]['value'] + '">' + drink_array[i]['name'] + '</option>';
+							} else if (drink_array[i]['pump-related']) {
+								ele.innerHTML = ele.innerHTML + '<option style="color:blue" value="' + drink_array[i]['value'] + '">' + drink_array[i]['name'] + ' (subbing ' + drink_array[i]['value-related'] + ', related)</option>';
+							} else if (drink_array[i]['pump-similar']) {
+								ele.innerHTML = ele.innerHTML + '<option style="color:blue" value="' + drink_array[i]['value'] + '">' + drink_array[i]['name'] + ' (subbing ' + drink_array[i]['value-similar'] + ', similar)</option>';
+							} else {
+								if (drink_array[i]['value'] == "garnish") {
+									ele.innerHTML = ele.innerHTML + '<option style="color:red" value="' + drink_array[i]['value'] + '">Manually add: ' + drink_array[i]['name'] + '</option>';
+								} else {
+									ele.innerHTML = ele.innerHTML + '<option style="color:red" value="' + drink_array[i]['value'] + '">' + drink_array[i]['name'] + ' (not loaded)</option>';
+								}
+							}
+						} else {
+							ele.innerHTML = ele.innerHTML + '<option value="' + drink_array[i]['value'] + '">' + drink_array[i]['name'] + '</option>';
+						}
+					}
+					ele.name = url;
+				}
+			};
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+		};
+
+		function changeList(id) {
+			var el1 = document.getElementById("list-select").name;
+			var el2 = el1.substr(0, el1.length-1);
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var drink_array = JSON.parse(this.responseText);
+					for (var i = 0; i < drink_array.length; i++) {
+						document.getElementById("header-name").innerHTML = "<p>" + drink_array[i]['name'] + "</p>"
+						if (el2 == "drink") {
+						  document.getElementById("header-details").innerHTML = drink_array[i]['description']
+						  document.getElementById("body-info").innerHTML = "<p><img style='width:200px;height:200px;' src='" + drink_array[i]['image'] + "' /></p>" + 
+							"<p class='drink-ware'><span style='font-weight:bold'>Drinkware:</span> " + drink_array[i]['drinkware'] + "</p>" + 
+							"<p class='drink-prep'><span style='font-weight:bold'>Preparation:</span> " + drink_array[i]['preparation'] + "</p>";
+						  for (item in drink_array) {
+							for (subItem in drink_array[item]) {
+								if (subItem == "ingredients") { var ingred_array = drink_array[item][subItem]; }
+							}
+						  }
+						  document.getElementById("body-list-select").innerHTML = "";
+						  document.getElementById("body-list-select").size = "8";
+						  document.getElementById("body-list-select").onchange = "";
+						  populateList('body-list-select','drink/ingreds/'+drink_array[i]['value']+'?json=true');
+						  if (drink_array[i]['external'] == undefined) {
+							  document.getElementById("button-external").style.visibility = "hidden";
+						  } else {
+							  document.getElementById("button-external").href = drink_array[i]['external'];
+							  document.getElementById("button-external").style.visibility = "visible";
+						  }
+						  document.getElementById("buttons").style.visibility = "visible";
+						  document.getElementById("button-make-1").style.visibility = "visible";
+						  document.getElementById("button-make-1").name = drink_array[i]['value'];
+						  document.getElementById("button-make-2").style.visibility = "visible";
+						  document.getElementById("button-make-2").name = drink_array[i]['value'] + "?modifier=double";
+						  document.getElementById("body-list-select").style.visibility = "visible";
+						} else if (el2 == "ingred") {
+							document.getElementById("header-details").innerHTML = drink_array[i]['description']
+							document.getElementById("body-list-select").innerHTML = "";
+							document.getElementById("body-info").innerHTML = "<p><img style='width:200px;height:200px;' src='" + drink_array[i]['image'] + "' /></p>" + 
+							  "<p class='drink-ware'><span style='font-weight:bold'>Type:</span> " + drink_array[i]['type'] + "</p>" + 
+							  "<p class='drink-prep'><span style='font-weight:bold'>Properties:</span> " + drink_array[i]['abv'] + " (ABV), " + drink_array[i]['acid'] + " (acid), " + drink_array[i]['sweet'] + " (sweet), " + drink_array[i]['bitter'] + " (bitter)</p>"
+							if (drink_array[i]['external'] == undefined) {
+							  document.getElementById("button-external").style.visibility = "hidden";
+							} else {
+							  document.getElementById("button-external").href = drink_array[i]['external'];
+							  document.getElementById("button-external").style.visibility = "visible";
+							}
+							document.getElementById("buttons").style.visibility = "visible";
+							document.getElementById("button-make-1").style.visibility = "hidden";
+							document.getElementById("button-make-2").style.visibility = "hidden";
+							document.getElementById("body-list-select").style.visibility = "hidden";
+						} else if (el2 == "pump") {
+							document.getElementById("header-details").innerHTML = "Configured to pin #" + drink_array[i]['value']
+							document.getElementById("body-form").action = "/pump/update/" + drink_array[i]['value'];
+							document.getElementById("body-list-select").innerHTML = "";
+							document.getElementById("body-list-select").size = "1";
+							document.getElementById("body-list-select").style.visibility = "hidden";
+							populateList('body-list-select','ingreds');
+							document.getElementById("body-info").innerHTML = drink_array[i]['description'];
+							document.getElementById("buttons").style.visibility = "hidden";
+							// We delay selection of the current ingredient to give time for the dropdown to populate
+							setTimeout(function(){
+								document.getElementById("body-list-select").value = document.getElementById("body-info").innerHTML;
+								document.getElementById("body-list-select").style.visibility = "visible";
+							}, 500);
+						} else if (el2 == "setting") {
+							document.getElementById("header-details").innerHTML = drink_array[i]['description']
+							document.getElementById("body-info").innerHTML = "Currently set to: " + drink_array[i]['set'];
+							if (drink_array[i]['options']) {
+								document.getElementById("body-info").innerHTML = document.getElementById("body-info").innerHTML + "<br /><br />Options are: " + drink_array[i]['options'];
+							}
+						}
+					}
+				}
+			};
+			xmlhttp.open("GET", el2+"/"+id, true);
+			xmlhttp.send();
+		};
+		
+		function init() {
+			populateList('list-select','drinks');
+		}
+    </script>
+  </head>
+  
+  <body onLoad="init()">  
+    
+  <div id="layout" class="content pure-g">
+    <div id="nav" class="pure-u">
+        <div class="nav-inner">
+            <button class="primary-button pure-button">Smart<br />Bartender</button>
+            <div class="pure-menu">
+                <ul class="pure-menu-list"><br />
+                    <li class="pure-menu-item"><a href="#" onclick="populateList('list-select','drinks');" class="pure-menu-link">Drink List <span class="drink-count"> </span></a></li>
+                    <li class="pure-menu-item"><a href="#" onclick="populateList('list-select','ingreds');" class="pure-menu-link">Ingredient List</a></li>
+                    <li class="pure-menu-item"><a href="#" onclick="populateList('list-select','pumps');" class="pure-menu-link">Pump Config</a></li>
+                    <li class="pure-menu-item"><a href="#" onclick="populateList('list-select','settings');" class="pure-menu-link">Settings</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">About</a></li>
+                    <br /><br /><li class="pure-menu-heading">Random</li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-personal"></span>Boozy</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-work"></span>Sweet</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-travel"></span>Acidic</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="list">
+		<select id="list-select" size="15" style="width:100%;height:99%;font-size:28px;padding:5px;border:0px;" onchange="changeList(value)"></select>
+    </div>
+
+    <div id="main" class="pure-u-1">
+        <div class="email-content">
+            <div class="email-content-header pure-g">
+                <div class="pure-u-1-2">
+                    <h1 class="email-content-title" id="header-name"><p>Welcome to Smart Bartender!</p></h1>
+                    <p class="email-content-subtitle" id="header-details">Select a Drink or another option</p>
+                </div>
+
+                <div class="email-content-controls pure-u-1-2" id="buttons" style="visibility:hidden;">
+                    <button class="secondary-button pure-button" id="button-make-1" onclick="makeDrink(this);">Make It!</button>
+                    <button class="secondary-button pure-button" id="button-make-2" onclick="makeDrink(this);">Make It A Double!</button>
+                    <a class="secondary-button pure-button" id="button-external" target="_blank">Info</a>
+                </div>
+            </div>
+            <div class="email-content-body" id="body-info"></div>
+			<div class="email-content-body" id="body-list">
+				<form id="body-form" method="post">
+				<select id="body-list-select" style="width:400px;border:0px;overflow-y:hidden;visibility:hidden;" onchange="updateSelect(this)"></select>
+				</form>
+			</div>
+        </div>
+    </div>
+  </div>
+    
+  </body>
+</html>

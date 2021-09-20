@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+window.onload = function () {
+        console.log('Dokument geladen');
+        load();
+	loadCocktailList();
+    }
+
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+    function(m,key,value) {
+      vars[key] = value;
+    });
+    return vars;
+  }
+  
+  //var params = getUrlVars();
+
+
+function load() {
+    		getFile('{{ url_for('static', filename='json/drinks.json') }}', function (allText) {	// pass a function to call when the request is done
+        		var drinks = allText;
+			//var mydata = JSON.parse(allText);
+			var drinks = JSON.parse(allText);
+    /*                    let loc = new URL('http://example.com/?nr=1');
+let url = loc.href;
+url = loc;
+params = new URLSearchParams(url.search);
+nr = parseInt(params.get('nr'));
+console.log(nr);*/
+
+var params = getUrlVars();
+
+
+			console.log(params["nr"]);
+                        nr = parseInt(params["nr"]);
+	        	//var img = document.getElementsByClassName("img_haut");
+                        //document.getElementsByClassName("img_haut").src = drinks[nr].picture;
+                        document.getElementById("cocktailimage").src= drinks[nr].picture;
+                        document.getElementById("cocktailimage").width= 50;
+			document.getElementById("cocktailimage").height= 50;
+			document.getElementById("cocktailimage").alt= drinks[nr].name;
+                        //const urlParams = new URLSearchParams(window.location.href); 
+
+                        // var url = window.location.href;
+                        //var url = new URL(location.href).searchParams;
+			//let params = new URLSearchParams(url.search);
+                        //let nr = params.has('nr') // 'mdn query string'
+
+                       // let keys = urlParams.keys();
+
+                        /*for(key in keys) {
+                              console.log(key);
+                        } */
+			//var c = url.searchParams.get("nr");
+			//console.log(c);
+                        // console.log(nr);
+			//img.setAttribute("src", drinks[0].picture);
+			//img.setAttribute("width", "50");
+                        //img.setAttribute("height", "50");
+  			//img.setAttribute("alt", drinks[0]);
+        		//console.log(urlParams);
+/*let loc = new URL('http://example.com/?nr=1');
+let url = loc.href;
+url = loc;
+params = new URLSearchParams(url.search);
+nr = params.get('nr')
+console.log(nr);*/
+        	});
+	}
+</script>
+<article>
+	<img id="cocktailimage" src="" alt="" title="" class="img_haut"/>
+        <p class="texte_haut"> <h2>Premier paragraphe</h2><br /> rédigé asdsadsdsadsadsadsad</p>
+</article>
+
+{% endblock %}
+
