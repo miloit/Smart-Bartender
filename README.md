@@ -150,7 +150,8 @@ sudo python bartender.py &
 If that doesn't work, you can consult this [guide](https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/) for more options.
 
 
-### Running at Startup
+### Running Hostpot
+
 sudo apt install hostapd -y
 sudo nano /etc/hostapd/hostapd.conf
 <interface=wlan0
