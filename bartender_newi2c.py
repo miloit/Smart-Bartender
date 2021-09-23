@@ -64,7 +64,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
 db = SQLAlchemy(app)
-
+#bartender = Bartender()
 
 GPIO.setmode(GPIO.BCM)
 
@@ -109,7 +109,16 @@ def about():
 
 @app.route('/cocktail', methods=['GET', 'POST'])
 def cocktail():
-    return render_template("cocktail.html")
+    if request.method == 'POST':
+        print (request.json)
+        #data = json.load(request.json)
+        data = json.loads(request.data)
+        #print (data['pump_1'])
+        bartender.makeDrink(data['name'], data['ingredients'])
+        data = {"status": "ok"}
+        return jsonify(data), 200
+    else:
+        return render_template("cocktail.html")
 
 @app.route('/wlanconfig', methods=['GET', 'POST'])
 def copywlanconfig():
@@ -424,7 +433,7 @@ def aajax_request():
         newIngredient["image"] = filename
 
         drink_options.append(newIngredient)
-        print("eeeee")
+        #print("eeeee")
         #for d in drink_list:
         #    print (d["name"])
         #    print (d["ingredients"])
@@ -998,7 +1007,7 @@ class Bartender(MenuDelegate):
 
     def cycleLights(self):
         t = threading.currentThread()
-        print(t)
+        #print(t)
         # head  = 0               # Index of first 'on' pixel
         # tail  = -10             # Index of last 'off' pixel
         # color = 0xFF0000        # 'On' color (starts red)
@@ -1097,23 +1106,23 @@ class Bartender(MenuDelegate):
         self.strip.show()
 
     def pour(self, pin, waitTime):
-        print("pump start")
-        print(pin)
-        print(waitTime)
+        #print("pump start")
+        #print(pin)
+        #print(waitTime)
         GPIO.output(pin, GPIO.LOW)
         time.sleep(waitTime)
         GPIO.output(pin, GPIO.HIGH)
-        print("pump stop")
-        print(pin)
+        #print("pump stop")
+        #print(pin)
         #self.runprogressbarthread = False
 
     def progressBar(self, waitTime):
         t = threading.currentThread()
-        print("waitTime")
-        print(waitTime)
+        #print("waitTime")
+        #print(waitTime)
         interval = (waitTime / 100)*1
-        print("interval")
-        print(interval)
+        #print("interval")
+        #print(interval)
         self.oled.fill(0)
         self.oled.show()
         image = Image.new("1", (self.oled.width, self.oled.height))
@@ -1157,8 +1166,8 @@ class Bartender(MenuDelegate):
         draw.rectangle((0, 40, 128, 20), outline=255, fill=255)
         self.oled.image(image)
         self.oled.show()
-        print("final x")
-        print(x)
+        #print("final x")
+        #print(x)
 
     def makeDrink(self, drink, ingredients):
         # cancel any button presses while the drink is being made
@@ -1168,7 +1177,7 @@ class Bartender(MenuDelegate):
         # launch a thread to control lighting
         lightsThread = threading.Thread(target=self.cycleLights)
         lightsThread.start()
-        
+        print (ingredients)
         # start the progress bar
         #self.progressBar(maxTime)
         # launch a thread to control lighting
@@ -1184,17 +1193,17 @@ class Bartender(MenuDelegate):
         for ing in list(ingredients.keys()):
             for pump in list(self.pump_configuration.keys()):
                 if ing == self.pump_configuration[pump]["value"]:
-                    print(self.pump_configuration[pump]["pin"])
-                    print(FLOW_RATE)
-                    print(ingredients[ing])
+                    #print(self.pump_configuration[pump]["pin"])
+                    #print(FLOW_RATE)
+                    #print(ingredients[ing])
                     waitTime = ingredients[ing] * FLOW_RATE
-                    print(waitTime)
+                    #print(waitTime)
                     if (waitTime > maxTime):
                         maxTime = waitTime
                     pump_t = threading.Thread(target=self.pour, args=(self.pump_configuration[pump]["pin"], waitTime))
                     pumpThreads.append(pump_t)
-                    print("MAXTIME")
-                    print(maxTime)
+                    #print("MAXTIME")
+                    #print(maxTime)
                     #print("pumps configured")
                     #print(len(pumpThreads))
 
@@ -1220,23 +1229,23 @@ class Bartender(MenuDelegate):
         # wait for threads to finish
         for thread in pumpThreads:
             thread.join()
-        print("pumps joined")
+        #print("pumps joined")
         # show the main menu
         #self.menuContext.showMenu()
         #self.runprogressbarthread = False
-        print("stopping progressbar")
+        #print("stopping progressbar")
         progressBarThread.do_run = False
         progressBarThread.join()
 
         # stop the light thread
-        print("stopping light")
+        #print("stopping light")
         lightsThread.do_run = False
         lightsThread.join()
 
         # stop the light thread
         progressBarThread.do_run = False
         progressBarThread.join()
-        print("stop progressbar")
+        #print("stop progressbar")
         # show the ending sequence lights
         self.lightsEndingSequence()
 
@@ -1311,6 +1320,7 @@ class Bartender(MenuDelegate):
 
     # traceback.print_exc()
 
+bartender = Bartender()
 
 def main():
     """
@@ -1321,7 +1331,7 @@ def main():
     #time.sleep(180)
     try:
         db.create_all()
-        bartender = Bartender()
+        #bartender = Bartender()
         app.run(host='0.0.0.0', port=80, use_reloader=False, debug=True, threaded=True)
         #ps = subprocess.Popen(['iwconfig'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         #try:

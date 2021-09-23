@@ -70,7 +70,7 @@
 			<div id="navibereich">
 				<div id="navibereich_innen">
 					<ul>
-						<li id="navi01"><a href="/home">Startseite</a></li>
+						<li id="navi03"><a href="/home">Startseite</a></li>
          					{% if session['logged_in'] %}
    						{% if session['username'] %}
 						<li id="navi02"><a href="/logout"> {{session['username']}}<br> Logout</a></li>
@@ -81,6 +81,7 @@
 						<li id="navi02"><a href="/login">Login</a></li>
 						{% endif %}
 						<li id="navi03"><a href="/form">Form</a></li>
+      						<li id="navi03"><a href="/pumpconfig">Pump Config</a></li>
 					</ul>
 				</div> <!-- Ende navibereich_innen -->
 			</div> <!-- Ende navibereich -->
